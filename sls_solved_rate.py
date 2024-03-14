@@ -29,6 +29,7 @@ cmap = plt.get_cmap('Blues')
 norm = Normalize(vmin=0, vmax=len(DT)+3)
 sm = ScalarMappable(norm=norm, cmap=cmap)
 
+t_ind = []
 data = []
 plt.figure(figsize=(5, 4))
 for i, dt in enumerate(DT):
@@ -57,16 +58,19 @@ for i, dt in enumerate(DT):
 
     if int(D) == D:
         D = int(D)
-
+    t_ind.append(np.round(D, 5))
     t1 = t[t <= D] / D
     t2 = 1 + (t[t > D] - D) / (t[-1] - D)
-
     tp = np.hstack((t1, t2))
-    # plt.plot(t2, label="$t_{ind}$=" + str(np.round(D, 5)))
     sigma_p = sigma_t[t > D]
     sigma_p = (sigma_p - sigma_p[-1]) / (sigma_p[0] - sigma_p[-1])
-    plt.plot(t[t > D] - D, sigma_p, color=sm.to_rgba(
+
+    # plt.plot(t[t > D] - D, sigma_t[t > D], color=sm.to_rgba(
+    #     i+3), label="$t_{ind}$=" + str(np.round(D, 5)))
+
+    plt.plot(epsilon_t, sigma_t, color=sm.to_rgba(
         i+3), label="$t_{ind}$=" + str(np.round(D, 5)))
+    
     # plt.show()
     data.append([t, epsilon_t, sigma_t])
 
@@ -91,9 +95,8 @@ plt.legend()
 plt.show()
 
 tau = []
-i = 0
 idx = []
-for d in data:
+for i, d in enumerate(data):
     t_appr, eps_appr, sig_appr = get_approach(d)
 
     t_dwell, eps_dwell, sig_dwell = get_dwell(d)
@@ -101,15 +104,17 @@ for d in data:
 
     tau.append(1/popt[0])
     idx.append(i)
-    i += 1
-    plt.scatter(t_dwell - t_dwell[0], sig_dwell, c='b')
+    plt.scatter(t_dwell - t_dwell[0], sig_dwell, color=sm.to_rgba(
+        i+3), label="$t_{ind}$=" + str(t_ind[i]), s=10)
     plt.plot(t_dwell - t_dwell[0],
              exponent(t_dwell - t_dwell[0], sig_dwell[0], *popt), 'r')
-    plt.show()
 
+plt.ylabel('$\\sigma$')
+plt.xlabel('Time')
+plt.legend()
+plt.show()
 print(tau)
 plt.scatter(idx, tau)
-plt.colorbar()
 plt.show()
 
 '''
