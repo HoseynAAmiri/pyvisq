@@ -16,7 +16,7 @@ norm = Normalize(vmin=min(TD), vmax=max(TD))
 sm = ScalarMappable(norm=norm, cmap=cmap)
 
 plt.figure(figsize=(5, 4))
-for td in TD:
+for i, td in enumerate(TD):
     T = (10.0**td) * D
     t = np.linspace(0, 2, 200)
     epsilon_t = (I * t / D) * (1 - np.heaviside(t - D, 0.5)) + \
@@ -26,7 +26,14 @@ for td in TD:
 
     if int(T) == T:
         T = int(T)
+
+    if i == 0:
+        plt.plot(t, epsilon_t * E1, '--g')
+
     plt.plot(t, sigma_t, color=sm.to_rgba(T), label="$\\tau$=" + str(T))
+
+    if i == len(TD) - 1:
+        plt.plot(t, epsilon_t * (E1 + E2), '--g')
 
 
 ax1 = plt.gca()
@@ -41,7 +48,7 @@ plt.legend()
 plt.twinx()
 ax2 = plt.gca()
 color2 = 'tab:red'
-plt.plot(t, epsilon_t, 'r', label='Strain')
+plt.plot(t, epsilon_t, ':r', label='Strain')
 ax2.set_ylabel('$\\epsilon$', color=color2)
 ax2.tick_params(axis='y', labelcolor=color2, colors=color2)
 ax2.spines['right'].set_color(color2)
