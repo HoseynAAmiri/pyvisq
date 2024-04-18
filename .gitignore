@@ -1,3 +1,10 @@
+# Personal
+data
+matlab
+old
+experiment_data.py
+.vscode
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
