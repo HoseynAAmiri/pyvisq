@@ -100,6 +100,24 @@ class FractionalSLS:
                ** (self.A - self.B)) + self.EK
         self.stress = self.modulus * self.strain
 
+    def trigger_force(self, trigger: float) -> None:
+        while True:
+            self.run()
+            max_stress = np.max(self.stress)
+
+            if np.isclose(max_stress, trigger, rtol=1e-3):
+                break
+            if max_stress > trigger:
+                rate = self.I / self.D
+                trigger_idx = np.argmin(np.abs(self.stress - trigger))
+                self.D = self.time[trigger_idx]
+                self.I = self.D * rate
+                self.run()
+            elif max_stress < trigger:
+                scale = trigger / max_stress
+                self.I *= scale
+                self.D *= scale
+
     def get_approach(self) -> dict[str, npt.NDArray[np.float64]]:
         idx = np.argmin(np.abs(self.time - self.D))
         approach = {

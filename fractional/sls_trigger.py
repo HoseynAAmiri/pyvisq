@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
-from sls_fractional import FractionalSLS, sweep
+from sls_fractional import FractionalSLS
 
 A = 1
 B = 0.35  # 0 =< B < A =< 1
@@ -56,28 +56,35 @@ config_test = {
     'D': D,
     'L': L,
 }
-x_to_y = ('E2', 'EK')
-values = [0.5, 1, 2, 10]
+x_to_y = ('I', 'D')
+values = [0.5, 1, 2, 10, 50, 100]
 cmap = plt.get_cmap('viridis_r')
 norm = Normalize(vmin=min(values), vmax=max(values))
 sm = ScalarMappable(norm=norm, cmap=cmap)
 fig = plt.figure(figsize=(4, 3))
 
-sls_base = FractionalSLS(config_full)
-sls_base.set_test(config_test)
-sweep_dict = sweep(sls_base, x_to_y, values)
+sls = FractionalSLS(config_full)
+sls.E1 = 1000
+sls.make()
+for val in values:
+    I = val * D
+    config_test['I'] = I
+    sls.set_test(config_test)
+    sls.trigger_force(5.0)
 
-for val, sls in sweep_dict.items():
-    sls.make()
-    sls.run()
+    # plt.plot(sls.time, sls.stress, color=sm.to_rgba(val),
+    #          label=f"${map_dict[x_to_y[0]]} / {map_dict[x_to_y[1]]}$=" + str(val))
 
-    plt.plot(sls.time, sls.stress, color=sm.to_rgba(val),
+    dwell = sls.get_dwell()
+    time, stress = dwell['time'], dwell['stress']
+    plt.plot(time-time[0], stress, color=sm.to_rgba(val),
              label=f"${map_dict[x_to_y[0]]} / {map_dict[x_to_y[1]]}$=" + str(val))
+
 
 plt.xlabel('Time')
 plt.ylabel('$\\sigma$')
 plt.legend()
 plt.tight_layout()
-plt.savefig(os.path.join('./data/sweep/', str(x_to_y[0]) +
-            '_to_' + str(x_to_y[1]) + '.png'), dpi=300)
+# plt.savefig(os.path.join('./data/trigger/', str(x_to_y[0]) +
+#             '_to_' + str(x_to_y[1]) + '.png'), dpi=300)
 plt.show()
