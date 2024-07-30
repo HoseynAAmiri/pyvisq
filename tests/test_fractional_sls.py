@@ -6,6 +6,8 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
 from pyvisq import FractionalSLS
+from pyvisq.utils import map_dict
+
 
 A = 1
 B = 0.3  # 0 =< B < A =< 1
@@ -20,20 +22,7 @@ CB = E2 * T2 ** B
 EK = 10.0
 mode = 'fast'
 
-map_dict = {
-    'A': '\\alpha',
-    'B': '\\beta',
-    'E1': 'E_1',
-    'E2': 'E_2',
-    'T1': '\\tau_1',
-    'T2': '\\tau_2',
-    'EK': 'E_K',
-    'CA': 'c_{\\alpha}',
-    'CB': 'c_{\\beta}',
-    'I': '\\epsilon',
-    'D': 't_{ind}',
-    'L': 't_{dwell}',
-}
+
 config_full = {
     'A': A,
     'B': B,

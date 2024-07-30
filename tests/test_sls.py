@@ -4,26 +4,15 @@ import matplotlib.pyplot as plt
 
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
+
 from pyvisq import SLS
+from pyvisq.utils import map_dict
 
 E1 = 1.0
 T1 = 1.0
 EK = 10.0
 
-map_dict = {
-    'A': '\\alpha',
-    'B': '\\beta',
-    'E1': 'E_1',
-    'E2': 'E_2',
-    'T1': '\\tau_1',
-    'T2': '\\tau_2',
-    'EK': 'E_K',
-    'CA': 'c_{\\alpha}',
-    'CB': 'c_{\\beta}',
-    'I': '\\epsilon',
-    'D': 't_{ind}',
-    'L': 't_{dwell}',
-}
+
 config_full = {
     'E1': E1,
     'T1': T1,

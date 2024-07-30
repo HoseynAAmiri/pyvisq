@@ -1,6 +1,5 @@
 import numpy as np
 import numpy.typing as npt
-import copy
 
 
 class Model:
@@ -80,18 +79,3 @@ class Model:
             'stress': self.stress[idx:]
         }
         return dwell
-
-
-def sweep(model: Model, x_to_y: tuple[str, str], values: list[float]) -> dict[float, Model]:
-    sweep_dict = dict()
-    x, y = x_to_y
-    y_value = getattr(model, y)
-    for val in values:
-        new_model = copy.deepcopy(model)
-        x_value = val * y_value
-        setattr(new_model, x, x_value)
-        new_model.make()
-        new_model.run()
-        sweep_dict[val] = new_model
-
-    return sweep_dict
