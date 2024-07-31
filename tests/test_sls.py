@@ -8,7 +8,19 @@ from matplotlib.colors import Normalize
 from pyvisq import SLS
 from pyvisq.utils import map_dict
 
-E1 = 1.0
+
+LATEX = True
+plt.rcParams.update({
+    "text.usetex": LATEX,
+    "font.family": "serif",
+    "font.serif": ["Computer Modern"],
+    "text.latex.preamble": r"\usepackage{amsmath}",
+})
+figsize = (3.3, 3)
+if LATEX:
+    map_dict['I'] = '\\varepsilon'
+
+E1 = 10.0
 T1 = 1.0
 EK = 10.0
 
@@ -32,8 +44,8 @@ values = [1, 2, 5, 10, 20]
 cmap = plt.get_cmap('viridis_r')
 norm = Normalize(vmin=min(values), vmax=max(values))
 sm = ScalarMappable(norm=norm, cmap=cmap)
-fig_approach = plt.figure(figsize=(4, 3))
-fig_dwell = plt.figure(figsize=(4, 3))
+fig_approach = plt.figure(figsize=figsize)
+fig_dwell = plt.figure(figsize=figsize)
 sls = SLS(config_full)
 for val in values:
     I = val * D
@@ -55,17 +67,17 @@ for val in values:
 
 
 plt.figure(fig_approach)
-plt.xlabel('$\\epsilon$')
+plt.xlabel('$\\varepsilon$')
 plt.ylabel('$\\sigma$')
-plt.legend()
+plt.legend(handlelength=1, handletextpad=1)
 plt.tight_layout()
 plt.savefig(os.path.join('../data/trigger/',
-            f'approach_SLS_{x_to_y[0]}_to_{x_to_y[1]}_approach.png'), dpi=300)
+            f'SLS_{x_to_y[0]}_to_{x_to_y[1]}_approach.pdf'), format="pdf")
 
 plt.figure(fig_dwell)
-plt.xlabel('Time')
+plt.xlabel('t')
 plt.ylabel('$\\sigma$')
-plt.legend()
+plt.legend(handlelength=1, handletextpad=1)
 plt.tight_layout()
 plt.savefig(os.path.join('../data/trigger/',
-            f'dwell_SLS_{x_to_y[0]}_to_{x_to_y[1]}_dwell.png'), dpi=300)
+            f'SLS_{x_to_y[0]}_to_{x_to_y[1]}_dwell.pdf'), format="pdf")
