@@ -44,7 +44,7 @@ class Burgers(Model):
         self.dashpot_a = self.maxwell_branch.dashpot
         self.spring_a = self.maxwell_branch.spring
         self.kelvinvoigt_branch = KelvinVoigt(
-            KelvinVoigtParams(params.spring_a, params.dashpot_a)
+            KelvinVoigtParams(params.dashpot_a, params.spring_a)
         )
         self.dashpot_b = self.kelvinvoigt_branch.dashpot
         self.spring_b = self.kelvinvoigt_branch.spring
