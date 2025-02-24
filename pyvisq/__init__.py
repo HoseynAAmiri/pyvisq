@@ -1,2 +1,1 @@
-from .sls import SLS
-from .fractional_sls import FractionalSLS
+from .models.model import Test, TestMethod

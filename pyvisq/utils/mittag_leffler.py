@@ -1,28 +1,35 @@
+import warnings
+
 import numpy as np
-from scipy.special import gamma
-from .ml_internal import LTInversion
 
+from scipy.special import gamma, gammaln
 
-def ml(z, alpha, beta=1., gama=1.):
-    eps = np.finfo(np.float64).eps
-    if np.real(alpha) <= 0 or np.real(gama) <= 0 or np.imag(alpha) != 0. \
-       or np.imag(beta) != 0. or np.imag(gama) != 0.:
-        raise ValueError(
-            'ALPHA and GAMA must be real and positive. BETA must be real.')
-    if np.abs(gama-1.) > eps:
-        if alpha > 1.:
-            raise ValueError('GAMMA != 1 requires 0 < ALPHA < 1')
-        if (np.abs(np.angle(np.repeat(z, np.abs(z) > eps))) <= alpha*np.pi).any():
-            raise ValueError('|Arg(z)| <= alpha*pi')
+def mittleff(
+    a: float,
+    b: float,
+    z: float,
+    max_terms: int = 1000,
+    tol: float = 1e-5
+) -> float:
+    result = 0.0
+    abs_z = abs(z)
+    if abs_z == 0:
+        if b > 0:
+            return 1.0 / gamma(b)
+        else:
+            warnings.warn("Invalid parameters: log(0) encountered.", RuntimeWarning)
+            return float('nan')
+    sign_z = np.sign(z)
+    for n in range(max_terms):
+        log_term = n * np.log(abs_z) - gammaln(a * n + b)
+        term = np.exp(log_term) * sign_z**n
+        result += term
+        if abs(term) < tol * abs(result):
+            break
 
-    return np.vectorize(ml_, [np.float64])(z, alpha, beta, gama)
+    if n == max_terms - 1:
+        warnings.warn(
+            f"_ml failed to converge with {n} terms. Increase max_terms.", RuntimeWarning
+            )
 
-
-def ml_(z, alpha, beta, gama):
-    # Target precision
-    log_epsilon = np.log(1.e-15)
-    # Inversion of the LT
-    if np.abs(z) < 1.e-15:
-        return 1/gamma(beta)
-    else:
-        return LTInversion(1, z, alpha, beta, gama, log_epsilon)
+    return result
