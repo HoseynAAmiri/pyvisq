@@ -62,6 +62,13 @@ test_params = {
     "L2": 2
 }
 test = Test(method=method, **test_params)
+"""
+input profile:
+    I   ==========
+      //:        :\\
+     // :        : \\
+    //  :D1      :L1\\D2==========L2
+"""
 
 # Define the Zener model parameters
 dashpot_a = zener.DashpotParams(c=1)
@@ -93,3 +100,9 @@ sls.set_test(test)
 sls.set_time()
 sls.set_input()  # Optional: set the input profile for visualization
 sls.run()
+```
+
+# References
++ J. L. Kaplan, A. Bonfanti, A. J. Kabla (2019). RHEOS.jl -- A Julia Package for Rheology Data Analysis. Journal of Open Source Software, 4(41), 1700, https://doi.org/10.21105/joss.01700
+
++ A. Bonfanti, J. L. Kaplan, G. Charras, A. J. Kabla (2020). Fractional viscoelastic models for power-law materials. Soft Matter, 16, 6002-6020, https://doi.org/10.1039/D0SM00354A
