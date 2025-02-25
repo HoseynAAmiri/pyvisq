@@ -124,8 +124,7 @@ class Springpot(Model):
 
     @lru_cache(maxsize=100)
     def G(self, t: float) -> float:
-        if t == 0:
-            return 0
+        t = max(t, 1e-10)
         e = self.params.e
         ce = self.params.ce
         return ce * t ** (-e) / gamma(1 - e)

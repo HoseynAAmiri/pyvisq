@@ -87,6 +87,7 @@ class FracDashpotMaxwell(Model):
 
     @lru_cache(maxsize=100)
     def G(self, t: float) -> float:
+        t = max(t, 1e-10)
         c = self.params.dashpot.c
         b = self.params.springpot.e
         cb = self.params.springpot.ce
@@ -174,6 +175,7 @@ class FracMaxwell(Model):
 
     @lru_cache(maxsize=100)
     def G(self, t: float) -> float:
+        t = max(t, 1e-10)
         a = self.params.springpot_a.e
         ca = self.params.springpot_a.ce
         b = self.params.springpot_b.e

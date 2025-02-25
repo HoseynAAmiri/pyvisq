@@ -163,10 +163,6 @@ class Model:
             self.data.strain = self._input()
 
     @staticmethod
-    def _integrand(t_prime: float, t: float, func1: Callable, func2: Callable) -> float:
-        return func1(t - t_prime) * func2(t_prime)
-
-    @staticmethod
     @lru_cache(maxsize=100)
     def quad(func: Callable, a: float, b: float) -> float:
         return quad(func, a, b, epsrel=1e-3)[0]
@@ -178,7 +174,7 @@ class Model:
             func = self.G
 
         def _integrand(t_prime: float) -> float:
-            return Model._integrand(t_prime, t, func, self._input_rate)
+            return func(t - t_prime) * self._input_rate(t_prime)
 
         def _boltzmann_integral(t: float) -> float:
             t = round(t, max(0, int(-np.log10(self.test.D1))) + 3)

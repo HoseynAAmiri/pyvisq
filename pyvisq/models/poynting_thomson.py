@@ -236,6 +236,7 @@ class FracJeffreysPT(Model):
 
     @lru_cache(maxsize=100)
     def G(self, t: float) -> float:
+        t = max(t, 1e-10)
         ca = self.params.dashpot_a.c
         b = self.params.springpot_b.e
         cb = self.params.springpot_b.ce
