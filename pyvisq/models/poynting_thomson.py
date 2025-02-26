@@ -177,6 +177,7 @@ class FracSLSPT(Model):
 
     @lru_cache(maxsize=100)
     def G(self, t: float) -> float:
+        t = max(t, 1e-10)
         a = self.params.springpot_a.e
         ca = self.params.springpot_a.ce
         kb = self.params.spring_b.k

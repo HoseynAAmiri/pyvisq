@@ -82,7 +82,7 @@ class FracDashpotKelvinVoigt(Model):
         self.params = params
         self.dashpot = Dashpot(params.dashpot)
         self.springpot = Springpot(params.springpot)
-        self.ml = MittagLeffler()
+        self.ml = MittagLeffler('creep')
 
     @property
     def params(self) -> FracDashpotKelvinVoigtParams:
@@ -101,6 +101,7 @@ class FracDashpotKelvinVoigt(Model):
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:
+        t = max(t, 1e-10)
         c = self.params.dashpot.c
         b = self.params.springpot.e
         cb = self.params.springpot.ce
@@ -132,7 +133,7 @@ class FracSpringKelvinVoigt(Model):
         self.params = params
         self.spring = Spring(params.spring)
         self.springpot = Springpot(params.springpot)
-        self.ml = MittagLeffler()
+        self.ml = MittagLeffler('creep')
 
     @property
     def params(self) -> FracSpringKelvinVoigtParams:
@@ -151,6 +152,7 @@ class FracSpringKelvinVoigt(Model):
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:
+        t = max(t, 1e-10)
         k = self.params.spring.k
         a = self.params.springpot.e
         ca = self.params.springpot.ce
@@ -182,7 +184,7 @@ class FracKelvinVoigt(Model):
         self.params = params
         self.springpot_a = Springpot(params.springpot_a)
         self.springpot_b = Springpot(params.springpot_b)
-        self.ml = MittagLeffler()
+        self.ml = MittagLeffler('creep')
 
     @property
     def params(self) -> FracKelvinVoigtParams:
@@ -201,6 +203,7 @@ class FracKelvinVoigt(Model):
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:
+        t = max(t, 1e-10)
         a = self.params.springpot_a.e
         ca = self.params.springpot_a.ce
         b = self.params.springpot_b.e

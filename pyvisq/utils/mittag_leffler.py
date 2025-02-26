@@ -6,20 +6,23 @@ from scipy.special import gamma, gammaln
 
 
 class MittagLeffler:
+    method: str = ""
     z_thresh: float | None = None
     thresh_eval: float = np.inf
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, method: str = "") -> None:
+        self.method = method
 
     def __call__(self, a: float, b: float, z: float) -> float:
         if self.z_thresh is None:
             eval_current = mittleff(a, b, z)
+            if self.method == "creep":
+                return eval_current
+
             if abs(eval_current) <= self.thresh_eval:
                 self.thresh_eval = eval_current
             else:
                 self.z_thresh = z
-
         return self.thresh_eval
 
 
