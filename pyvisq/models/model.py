@@ -87,10 +87,10 @@ class Model:
         L1: float | None = None,
         D2: float | None = None,
         L2: float | None = None,
-        D1_size: int = 101,
-        L1_size: int = 101,
-        D2_size: int = 101,
-        L2_size: int = 101,
+        D1_size: int = 21,
+        L1_size: int = 21,
+        D2_size: int = 21,
+        L2_size: int = 21,
     ) -> None:
         D1 = self.test.D1 if D1 is None else D1
         L1 = self.test.L1 if L1 is None else L1
@@ -177,7 +177,7 @@ class Model:
             return func(t - t_prime) * self._input_rate(t_prime)
 
         def _boltzmann_integral(t: float) -> float:
-            t = round(t, max(0, int(-np.log10(self.test.D1))) + 3)
+            t = round(t, max(0, int(-np.log10(self.test.D1))) + 4)
             if t < 0:
                 raise ValueError("Invalid time value.")
             if t == 0:

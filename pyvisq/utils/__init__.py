@@ -1,1 +1,1 @@
-from .mittag_leffler import mittleff
+from .mittag_leffler import MittagLeffler

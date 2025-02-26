@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from .model import Model
 from .elements import Spring, Dashpot, Springpot, SpringParams, DashpotParams, SpringpotParams
 from .kelvinvoigt import KelvinVoigt, KelvinVoigtParams, FracDashpotKelvinVoigt, FracDashpotKelvinVoigtParams, FracSpringKelvinVoigt, FracSpringKelvinVoigtParams, FracKelvinVoigt, FracKelvinVoigtParams
-from ..utils import mittleff
+from ..utils import MittagLeffler
 
 
 @dataclass
@@ -144,6 +144,7 @@ class FracSLSPT(Model):
     spring_b: Spring
     kelvingvoigt_branch: FracSpringKelvinVoigt
     spring_c: Spring
+    ml: MittagLeffler
     diagram = """
                  _________╱╲_________
                 |         ╲╱  ca, a  |
@@ -162,6 +163,7 @@ class FracSLSPT(Model):
         self.springpot_a = self.kelvingvoigt_branch.springpot
         self.spring_b = self.kelvingvoigt_branch.spring
         self.spring_c = Spring(params.spring_c)
+        self.ml = MittagLeffler()
 
     @property
     def params(self) -> FracSLSPTParams:
@@ -183,7 +185,7 @@ class FracSLSPT(Model):
         Zkb = (kc**2) / (kb + kc)
         Zca = ca * (kc**2) / (kb + kc)**2
         Zkc = (kb * kc) / (kb + kc)
-        return Zkb * mittleff(a, a, - (Zkb / Zca) * (t**a)) + Zkc
+        return Zkb * self.ml(a, a, - (Zkb / Zca) * (t**a)) + Zkc
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:
@@ -203,6 +205,7 @@ class FracJeffreysPT(Model):
     springpot_a: Springpot
     kelvingvoigt_branch: FracDashpotKelvinVoigt
     dashpot_c: Dashpot
+    ml: MittagLeffler
     diagram = """
                          ___
                  _________| |________
@@ -222,6 +225,7 @@ class FracJeffreysPT(Model):
         self.dashpot_a = self.kelvingvoigt_branch.dashpot
         self.springpot_a = self.kelvingvoigt_branch.springpot
         self.dashpot_c = Dashpot(params.dashpot_c)
+        self.ml = MittagLeffler()
 
     @property
     def params(self) -> FracJeffreysPTParams:
@@ -246,7 +250,7 @@ class FracJeffreysPT(Model):
         Zcb = cb * (cc**2) / (ca + cc)**2
         Zcc = (ca * cc) / (ca + cc)
         diracterm = 0.0 if t != 0.0 else np.inf
-        return Zcb * (t**(-b)) * mittleff(1 - b, 1 - b, -Zcb * t**(1 - b) / Zca) + Zcc * diracterm
+        return Zcb * (t**(-b)) * self.ml(1 - b, 1 - b, -Zcb * t**(1 - b) / Zca) + Zcc * diracterm
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:
