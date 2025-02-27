@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from .model import Model
 from .elements import Spring, Dashpot, Springpot, SpringParams, DashpotParams, SpringpotParams
-from ..utils import MittagLeffler
+from ..utils import ml
 
 
 @dataclass
@@ -62,7 +62,6 @@ class FracDashpotMaxwell(Model):
     _params: FracDashpotMaxwellParams
     dashpot: Dashpot
     springpot: Springpot
-    ml: MittagLeffler
     diagram = """
                 ___
             _____| |_______╱╲____
@@ -74,7 +73,6 @@ class FracDashpotMaxwell(Model):
         self.params = params
         self.dashpot = Dashpot(params.dashpot)
         self.springpot = Springpot(params.springpot)
-        self.ml = MittagLeffler()
 
     @property
     def params(self) -> FracDashpotMaxwellParams:
@@ -93,7 +91,7 @@ class FracDashpotMaxwell(Model):
         c = self.params.dashpot.c
         b = self.params.springpot.e
         cb = self.params.springpot.ce
-        return cb * t ** (-b) * self.ml(1 - b, 1 - b, -cb * t ** (1 - b) / c)
+        return cb * t ** (-b) * ml(1 - b, 1 - b, -cb * t ** (1 - b) / c)
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:
@@ -110,7 +108,6 @@ class FracSpringMaxwell(Model):
     _params: FracSpringMaxwellParams
     springpot: Springpot
     spring: Spring
-    ml: MittagLeffler
     diagram = """
             ____╱╲_________╱╲  ╱╲  ╱╲  ______
                 ╲╱  ca, a    ╲╱  ╲╱  ╲╱  k
@@ -121,7 +118,6 @@ class FracSpringMaxwell(Model):
         self.params = params
         self.spring = Spring(params.spring)
         self.springpot = Springpot(params.springpot)
-        self.ml = MittagLeffler()
 
     @property
     def params(self) -> FracSpringMaxwellParams:
@@ -139,7 +135,7 @@ class FracSpringMaxwell(Model):
         k = self.params.spring.k
         a = self.params.springpot.e
         ca = self.params.springpot.ce
-        return k * self.ml(a, a, -k * t ** (a) / ca)
+        return k * ml(a, a, -k * t ** (a) / ca)
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:
@@ -156,7 +152,6 @@ class FracMaxwell(Model):
     _params: FracMaxwellParams
     springpot_a: Springpot
     springpot_b: Springpot
-    ml: MittagLeffler
     diagram = """
             ____╱╲___________╱╲______
                 ╲╱  ca, a    ╲╱  cb, b
@@ -167,7 +162,6 @@ class FracMaxwell(Model):
         self.params = params
         self.springpot_a = Springpot(params.springpot_a)
         self.springpot_b = Springpot(params.springpot_b)
-        self.ml = MittagLeffler()
 
     @property
     def params(self) -> FracMaxwellParams:
@@ -186,7 +180,7 @@ class FracMaxwell(Model):
         ca = self.params.springpot_a.ce
         b = self.params.springpot_b.e
         cb = self.params.springpot_b.ce
-        return cb * t ** (-b) * self.ml(a - b, 1 - b, -cb * t ** (a - b) / ca)
+        return cb * t ** (-b) * ml(a - b, 1 - b, -cb * t ** (a - b) / ca)
 
     @lru_cache(maxsize=100)
     def J(self, t: float) -> float:

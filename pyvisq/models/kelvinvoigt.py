@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from .model import Model
 from .elements import Spring, Dashpot, Springpot, SpringParams, DashpotParams, SpringpotParams
-from ..utils import MittagLeffler
+from ..utils import ml
 
 
 @dataclass
@@ -66,7 +66,6 @@ class FracDashpotKelvinVoigt(Model):
     _params: FracDashpotKelvinVoigtParams
     dashpot: Dashpot
     springpot: Springpot
-    ml: MittagLeffler
     diagram = """
                         ___
                  ________| |_________
@@ -82,7 +81,6 @@ class FracDashpotKelvinVoigt(Model):
         self.params = params
         self.dashpot = Dashpot(params.dashpot)
         self.springpot = Springpot(params.springpot)
-        self.ml = MittagLeffler('creep')
 
     @property
     def params(self) -> FracDashpotKelvinVoigtParams:
@@ -105,7 +103,7 @@ class FracDashpotKelvinVoigt(Model):
         c = self.params.dashpot.c
         b = self.params.springpot.e
         cb = self.params.springpot.ce
-        return (t / c) * self.ml(1 - b, 1 + 1, -cb * t ** (1 - b) / c)
+        return (t / c) * ml(1 - b, 1 + 1, -cb * t ** (1 - b) / c)
 
 
 @dataclass
@@ -118,7 +116,6 @@ class FracSpringKelvinVoigt(Model):
     _params: FracSpringKelvinVoigtParams
     springpot: Springpot
     spring: Spring
-    ml: MittagLeffler
     diagram = """
                  _________╱╲_________
                 |         ╲╱  ca, a  |
@@ -133,7 +130,6 @@ class FracSpringKelvinVoigt(Model):
         self.params = params
         self.spring = Spring(params.spring)
         self.springpot = Springpot(params.springpot)
-        self.ml = MittagLeffler('creep')
 
     @property
     def params(self) -> FracSpringKelvinVoigtParams:
@@ -156,7 +152,7 @@ class FracSpringKelvinVoigt(Model):
         k = self.params.spring.k
         a = self.params.springpot.e
         ca = self.params.springpot.ce
-        return (t ** a / ca) * self.ml(a, 1 + a, -k * t ** a / ca)
+        return (t ** a / ca) * ml(a, 1 + a, -k * t ** a / ca)
 
 
 @dataclass
@@ -169,7 +165,6 @@ class FracKelvinVoigt(Model):
     _params: FracKelvinVoigtParams
     springpot_a: Springpot
     springpot_b: Springpot
-    ml: MittagLeffler
     diagram = """
                  _________╱╲_________
                 |         ╲╱  ca, a  |
@@ -184,7 +179,6 @@ class FracKelvinVoigt(Model):
         self.params = params
         self.springpot_a = Springpot(params.springpot_a)
         self.springpot_b = Springpot(params.springpot_b)
-        self.ml = MittagLeffler('creep')
 
     @property
     def params(self) -> FracKelvinVoigtParams:
@@ -208,4 +202,4 @@ class FracKelvinVoigt(Model):
         ca = self.params.springpot_a.ce
         b = self.params.springpot_b.e
         cb = self.params.springpot_b.ce
-        return (t ** a / ca) * self.ml(a - b, 1 + a, -cb * t ** (a - b) / ca)
+        return (t ** a / ca) * ml(a - b, 1 + a, -cb * t ** (a - b) / ca)

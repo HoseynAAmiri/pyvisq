@@ -2,28 +2,44 @@ import warnings
 
 import numpy as np
 
+from pymittagleffler import mittag_leffler
 from scipy.special import gamma, gammaln
 
 
-class MittagLeffler:
-    method: str = ""
-    z_thresh: float | None = None
-    thresh_eval: float = np.inf
+def ml(a: float, b: float, z: float) -> float:
+    return np.real(mittag_leffler(z, a, b))
 
-    def __init__(self, method: str = "") -> None:
-        self.method = method
+
+class MittagLeffler:
+    # sloppy implementation of Mittag-Leffler function
+    last_z: float
+    z_thresh: float | None
+    thresh_eval: float
+
+    def __init__(self) -> None:
+        self.last_z = -np.inf
+        self.z_thresh = None
+        self.thresh_eval = np.inf
 
     def __call__(self, a: float, b: float, z: float) -> float:
         if self.z_thresh is None:
             eval_current = mittleff(a, b, z)
-            if self.method == "creep":
-                return eval_current
-
-            if abs(eval_current) <= self.thresh_eval:
-                self.thresh_eval = eval_current
+            z = abs(z)
+            if z > self.last_z:
+                self.last_z = z
+                if abs(eval_current) <= self.thresh_eval:
+                    self.thresh_eval = eval_current
+                    return eval_current
+                else:
+                    self.z_thresh = z
+                    return self.thresh_eval
             else:
-                self.z_thresh = z
-        return self.thresh_eval
+                return eval_current
+        else:
+            if abs(z) < self.z_thresh:
+                return mittleff(a, b, z)
+            else:
+                return self.thresh_eval
 
 
 def mittleff(
