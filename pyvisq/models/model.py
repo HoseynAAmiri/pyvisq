@@ -33,9 +33,13 @@ class Test:
 
     def __post_init__(self):
         if self.D1 <= 0:
-            raise ValueError("D1 must be greater than zero.")
-        if self.L1 <= 0:
-            raise ValueError("L1 must be greater than zero.")
+            raise ValueError("D1 must be > zero.")
+        if self.L1 < 0:
+            raise ValueError("L1 must be >= zero.")
+        if self.D2 < 0:
+            raise ValueError("D2 must be >= zero.")
+        if self.L2 < 0:
+            raise ValueError("L2 must be >= zero.")
 
 
 @dataclass
