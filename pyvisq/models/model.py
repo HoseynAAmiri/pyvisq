@@ -178,26 +178,30 @@ class Model:
 
         def _boltzmann_integral(t: float) -> float:
             t = round(t, max(0, int(-np.log10(self.test.D1))) + 4)
+
             if t < 0:
                 raise ValueError("Invalid time value.")
+
             if t == 0:
                 return 0.0
+
             if t < self.test.D1:
                 return Model.quad(_integrand, 0, t)
-            else:
-                p1 = Model.quad(_integrand, 0, self.test.D1)
-                if t < self.test.D1 + self.test.L1:
-                    return p1
-                else:
-                    if t < self.test.D1 + self.test.L1 + self.test.D2:
-                        return p1 + Model.quad(_integrand, self.test.L1 + self.test.D1, t)
-                    else:
-                        p2 = Model.quad(
-                            _integrand,
-                            self.test.L1 + self.test.D1,
-                            self.test.D1 + self.test.L1 + self.test.D2,
-                        )
-                        return p1 + p2
+
+            p1 = Model.quad(_integrand, 0, self.test.D1)
+            if t < self.test.D1 + self.test.L1:
+                return p1
+
+            if t < self.test.D1 + self.test.L1 + self.test.D2:
+                return p1 + Model.quad(_integrand, self.test.L1 + self.test.D1, t)
+
+            p2 = Model.quad(
+                _integrand,
+                self.test.L1 + self.test.D1,
+                self.test.D1 + self.test.L1 + self.test.D2,
+            )
+            return p1 + p2
+
         return _boltzmann_integral(t)
 
     def run(self) -> None:
@@ -216,25 +220,3 @@ class Model:
             strain=self.data.strain[idx1:idx2+1],
             stress=self.data.stress[idx1:idx2+1]
         )
-
-    # def trigger_force(self, trigger: float) -> None:
-    #     while True:
-    #         self.run()
-    #         approach = self.get_approach()
-    #         stress = approach["stress"]
-    #         max_stress = stress[-1]
-    #         if max_stress < 0:
-    #             self.stress = -1 * self.time
-    #             break
-    #         if np.isclose(max_stress, trigger, rtol=1e-3):
-    #             break
-    #         if max_stress > trigger:
-    #             rate = self.I / self.D
-    #             trigger_idx = np.argmin(np.abs(stress - trigger)).astype(int)
-    #             trigger_idx = int(max(trigger_idx, 1))
-    #             self.D = self.time[trigger_idx]
-    #             self.I = self.D * rate
-    #         elif max_stress < trigger:
-    #             scale = trigger / max_stress
-    #             self.I *= scale
-    #             self.D *= scale

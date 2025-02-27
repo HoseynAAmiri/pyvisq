@@ -35,7 +35,7 @@ class TestModelMethodsCreep(unittest.TestCase):
     def test_set_time(self):
         self.model.set_time()
         time = self.model.data.time
-        self.assertEqual(len(time), 401)
+        self.assertEqual(len(time), 81)
         self.assertAlmostEqual(time[-1], 1.0)
 
     def test_set_test(self):
@@ -50,15 +50,15 @@ class TestModelMethodsCreep(unittest.TestCase):
         self.model.set_test(creep)
         self.model.set_time()
         input = self.model._input()
-        self.assertEqual(len(input), 401)
+        self.assertEqual(len(input), 81)
         self.assertAlmostEqual(input[-1], 0.0)
 
     def test_input2(self):
         self.model.set_test(creep)
         self.model.set_time()
         input = self.model._input()
-        self.assertEqual(len(input), 401)
-        self.assertAlmostEqual(input[101], 1.0)
+        self.assertEqual(len(input), 81)
+        self.assertAlmostEqual(input[21], 1.0)
 
 
 if __name__ == '__main__':
